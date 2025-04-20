@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link href="../static/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="main">
+    <div class="path">
+      {{request.url.path}}
+    </div>
+    <div class="block">
+      <h2 class="title">Personal Blog</h2>
+
+      {% for article in articles %}
+
+      <div class="article">
+        <a href="#" class="title">{{article.title}}</a>
+      </div>
+
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+
+</html>
