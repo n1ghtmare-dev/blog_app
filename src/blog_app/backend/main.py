@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 
 app = FastAPI()
@@ -14,6 +15,10 @@ app.mount(
     name="static"
 )
 
+
+@app.get("/")
+def main_path():
+    return RedirectResponse("/home/", status_code=301)
 
 @app.get("/home/")
 def get_articles(request: Request):
