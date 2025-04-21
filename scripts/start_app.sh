@@ -3,6 +3,5 @@
 # APP VALUES
 MAIN_FILE_PATH="../src/blog_app/main.py"
 
-# ACTIVATE ENVIROMENT
-
+# LAUNCH 
 poetry run python3 "$MAIN_FILE_PATH"
