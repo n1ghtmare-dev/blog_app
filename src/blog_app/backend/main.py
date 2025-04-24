@@ -5,6 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from backend.core.models import Base, db_helper
 from contextlib import asynccontextmanager
+from .api_v1 import router as router_v1
+from .core.config import settings
 
 
 @asynccontextmanager
@@ -13,8 +15,8 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     yield
 
-
 app = FastAPI(lifespan=lifespan)
+app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
 
 BaseDir = Path(__file__).resolve().parent.parent
 templates = Jinja2Templates(directory=str(BaseDir / "frontend/templates"))
