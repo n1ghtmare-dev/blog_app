@@ -6,8 +6,16 @@ class ArticleBase(BaseModel):
     date: str
     description: str
 
-class ArticleCreate(BaseModel):
+class ArticleCreate(ArticleBase):
     pass
+
+class ArticleUpdate(ArticleCreate):
+    pass
+
+class ArticleUpdatePartial(ArticleCreate):
+    title: str | None = None
+    date: str | None = None
+    description: str | None = None
 
 class Article(ArticleBase):
     model_config = ConfigDict(from_attributes=True)

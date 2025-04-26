@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from . import crud
-from .schemas import Article, ArticleCreate
+from .schemas import Article, ArticleCreate, ArticleUpdate, ArticleUpdatePartial
 from backend.core.models import db_helper
 from sqlalchemy.ext.asyncio import AsyncSession
+from .dependencies import article_by_id
 
 
 router = APIRouter(tags=["Articles"])
@@ -13,7 +14,7 @@ async def get_articles(session: AsyncSession = Depends(db_helper.scoped_session_
     return await crud.get_articles(session=session)
    
 
-@router.post("/", response_model=Article)
+@router.post("/", response_model=Article, status_code=status.HTTP_201_CREATED)
 async def create_article(
     article_in: ArticleCreate,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
@@ -23,14 +24,40 @@ async def create_article(
 
 @router.get("/{article_id}/", response_model=Article)
 async def get_article(
-    article_id: int,
+    article: Article = Depends(article_by_id),
+):
+    return article
+
+
+@router.put("/{article_id}/")
+async def update_article(
+    article_update: ArticleUpdate,
+    article: Article = Depends(article_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    article = await crud.get_article(session=session, article_id=article_id)
-    if article:
-        return article
-    else: 
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Article {article_id} not found!",
-        )
+    return await crud.update_article(
+        session=session,
+        article=article,
+        article_update=article_update,
+    )
+
+
+@router.patch("/{article_id}/")
+async def update_article(
+    article_update: ArticleUpdatePartial,
+    article: Article = Depends(article_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await crud.update_article(
+        session=session,
+        article=article,
+        article_update=article_update,
+        partial=True,
+    )
+
+@router.delete("/{article_id}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_article(
+    article: Article = Depends(article_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+) -> None:
+    await crud.delete_article(article=article, session=session)
