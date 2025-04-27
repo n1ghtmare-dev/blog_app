@@ -1,13 +1,17 @@
-from fastapi import FastAPI, Request
+from fastapi import Request, FastAPI
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
-from backend.core.models import Base, db_helper
-from contextlib import asynccontextmanager
 from .api_v1 import router as router_v1
 from .core.config import settings
+from backend.views.home import router as router_home 
+from contextlib import asynccontextmanager
+from backend.core.models import Base, db_helper
+from backend.utils.templating import templates
 
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -16,16 +20,14 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
-
-BaseDir = Path(__file__).resolve().parent.parent
-templates = Jinja2Templates(directory=str(BaseDir / "frontend/templates"))
 app.mount(
     "/static",
-    StaticFiles(directory=str(BaseDir / "frontend/static")),
+    StaticFiles(directory=str(BASE_DIR / "src/blog_app/frontend/static")),
     name="static"
 )
 
+app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
+app.include_router(router=router_home, prefix=settings.home_prefix)
 
 @app.get("/")
 def main_path():
@@ -50,6 +52,10 @@ def get_articles(request: Request):
             'date': 'August 7, 2024'
         },
     ]
+
+    articles = ...
+    print(articles)
+
     return templates.TemplateResponse("index.html", {"request": request, "articles": articles}) 
 
 

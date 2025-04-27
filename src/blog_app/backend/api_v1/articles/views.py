@@ -43,7 +43,7 @@ async def update_article(
 
 
 @router.patch("/{article_id}/")
-async def update_article(
+async def update_article_partial(
     article_update: ArticleUpdatePartial,
     article: Article = Depends(article_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),

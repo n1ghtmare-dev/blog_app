@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
 from sqlalchemy import select
-from .schemas import Article, ArticleCreate, ArticleUpdate, ArticleUpdatePartial
+from backend.core.models import Article
+from backend.schemas.articles import ArticleCreate, ArticleUpdate, ArticleUpdatePartial
 
 
 async def get_articles(session: AsyncSession) -> list[Article]:
